@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluiTec.AppFx.Data" Version="1.0.8" />
-    <PackageReference Include="FluiTec.AppFx.Identity" Version="1.0.2" />
+    <PackageReference Include="FluiTec.AppFx.Identity" Version="1.0.3" />
     <PackageReference Include="FluiTec.AppFx.Options" Version="1.0.10" />
     <PackageReference Include="IdentityServer4" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
