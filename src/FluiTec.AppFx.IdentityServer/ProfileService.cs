@@ -100,7 +100,7 @@ namespace FluiTec.AppFx.IdentityServer
                         ClaimValueTypes.Boolean)
                 });
 
-            if (_userManager.SupportsUserPhoneNumber)
+            if (_userManager.SupportsUserPhoneNumber && !string.IsNullOrWhiteSpace(user.Phone))
                 claims.AddRange(new[]
                 {
                     new Claim(JwtClaimTypes.PhoneNumber, user.Phone),
