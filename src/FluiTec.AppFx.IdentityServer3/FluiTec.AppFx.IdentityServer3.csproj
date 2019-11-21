@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageProjectUrl>https://www.nuget.org/packages/FluiTec.AppFx.Data/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/FluiTec/FluiTec.AppFx.Data</RepositoryUrl>
-	  <NeutralLanguage>de</NeutralLanguage>
-	  <PostBuildEvent></PostBuildEvent>
-	  <PreBuildEvent></PreBuildEvent>
-	  <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <NeutralLanguage>de</NeutralLanguage>
+    <PostBuildEvent></PostBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
     <PackageReference Include="FluiTec.AppFx.Data" Version="1.0.9" />
     <PackageReference Include="FluiTec.AppFx.Identity" Version="1.0.5" />
     <PackageReference Include="FluiTec.AppFx.Options" Version="1.0.11" />
-    <PackageReference Include="IdentityServer4" Version="2.5.3" />
+    <PackageReference Include="IdentityServer4" Version="3.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
   </ItemGroup>
 
