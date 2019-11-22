@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FluiTec.AppFx.IdentityServer.Configuration;
+using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.IdentityModel.Tokens;
 
@@ -36,7 +37,7 @@ namespace FluiTec.AppFx.IdentityServer
         /// <summary>Gets all validation keys.</summary>
         /// <returns>The asynchronous result that yields an enumerator that allows foreach to be used to
         /// process the validation keys asynchronous in this collection.</returns>
-        public Task<IEnumerable<SecurityKey>> GetValidationKeysAsync()
+        public Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
         {
             var keys = new List<SecurityKey>
             {
@@ -45,7 +46,7 @@ namespace FluiTec.AppFx.IdentityServer
             if (_options.ValidationThumbprints != null && _options.ValidationThumbprints.Any())
                 keys.AddRange(_options.ValidationThumbprints.Select(thumb => FromCertificate(GetCertificate(thumb, StoreLocation.LocalMachine, StoreName.My))));
 
-            return Task.FromResult<IEnumerable<SecurityKey>>(keys);
+            return Task.FromResult(keys.Select(k => new SecurityKeyInfo {Key = k, SigningAlgorithm = "RS256"}));
         }
 
         /// <summary>Gets a certificate.</summary>
@@ -56,15 +57,13 @@ namespace FluiTec.AppFx.IdentityServer
         /// <returns>The certificate.</returns>
         private X509Certificate2 GetCertificate(string thumbprint, StoreLocation location, StoreName storeName)
         {
-            using (var store = new X509Store(storeName, location))
-            {
-                store.Open(OpenFlags.ReadOnly);
-                var certCollection = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
-                if (certCollection.Count == 0)
-                    throw new Exception("No certificate found containing the specified thumbprint.");
+            using var store = new X509Store(storeName, location);
+            store.Open(OpenFlags.ReadOnly);
+            var certCollection = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
+            if (certCollection.Count == 0)
+                throw new Exception("No certificate found containing the specified thumbprint.");
 
-                return certCollection[0];
-            }
+            return certCollection[0];
         }
 
         /// <summary>Initializes this object from the given from certificate.</summary>

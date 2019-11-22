@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluiTec.AppFx.IdentityServer.Configuration;
 using FluiTec.AppFx.IdentityServer.Entities;
 using IdentityModel;
+using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -77,18 +78,17 @@ namespace FluiTec.AppFx.IdentityServer
 
         /// <summary>	Gets validation keys asynchronous. </summary>
         /// <returns>	The validation keys asynchronous. </returns>
-        public Task<IEnumerable<SecurityKey>> GetValidationKeysAsync()
+        public Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
         {
-            return Task<IEnumerable<SecurityKey>>.Factory.StartNew(() =>
+            return Task<IEnumerable<SecurityKeyInfo>>.Factory.StartNew(() =>
             {
-                using (var uow = _dataService.StartUnitOfWork())
-                {
-                    var credentials =
-                        uow.SigningCredentialRepository.GetValidationValid(
-                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(_signingOptions.ValidationValidDays)));
-                    var keys = credentials.Select(c => JsonConvert.DeserializeObject<TemporaryRsaKey>(c.Contents));
-                    return keys.Select(k => CreateRsaSecurityKey(k.Parameters, k.KeyId)).ToList();
-                }
+                using var uow = _dataService.StartUnitOfWork();
+                var credentials =
+                    uow.SigningCredentialRepository.GetValidationValid(
+                        DateTime.UtcNow.Subtract(TimeSpan.FromDays(_signingOptions.ValidationValidDays)));
+                var keys = credentials.Select(c => JsonConvert.DeserializeObject<TemporaryRsaKey>(c.Contents));
+
+                return keys.Select(k => GetSecurityKeyInfo(CreateRsaSecurityKey(k.Parameters, k.KeyId))).ToList();
             });
         }
 
@@ -112,13 +112,11 @@ namespace FluiTec.AppFx.IdentityServer
         /// <returns></returns>
         private static RsaSecurityKey CreateRsaSecurityKey()
         {
-            using (var rsa = RSA.Create())
-            {
-                rsa.KeySize = 2048;
-                // ReSharper disable once RedundantArgumentDefaultValue
-                var key = new RsaSecurityKey(rsa) {KeyId = CryptoRandom.CreateUniqueId(RsaKeyLength)};
-                return key;
-            }
+            using var rsa = RSA.Create();
+            rsa.KeySize = 2048;
+            // ReSharper disable once RedundantArgumentDefaultValue
+            var key = new RsaSecurityKey(rsa) { KeyId = CryptoRandom.CreateUniqueId(RsaKeyLength) };
+            return key;
         }
 
         /// <summary>	Creates rsa security key. </summary>
@@ -133,6 +131,11 @@ namespace FluiTec.AppFx.IdentityServer
             };
 
             return key;
+        }
+
+        public static SecurityKeyInfo GetSecurityKeyInfo(RsaSecurityKey key) 
+        {
+            return new SecurityKeyInfo {Key = key, SigningAlgorithm = "RS256"};
         }
 
         /// <summary>	Creates new rsa key. </summary>
