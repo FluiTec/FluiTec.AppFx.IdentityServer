@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection ConfigureIdentityServerDataService(this IServiceCollection services,
             IConfigurationRoot configuration, bool migrate = true)
         {
-            var provider = new IdentityServerDataProvider(configuration.GetConfiguration<IdentityServerOptions>());
+            var provider = new IdentityServerDataProvider(configuration.Configure<IdentityServerOptions>(new ServiceCollection()));
             services.AddScoped(p => provider.GetDataService(configuration));
 
             if (migrate)

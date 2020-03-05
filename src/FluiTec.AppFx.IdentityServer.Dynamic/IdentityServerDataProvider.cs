@@ -11,6 +11,7 @@ using FluiTec.AppFx.IdentityServer.Dynamic.Configuration;
 using FluiTec.AppFx.IdentityServer.LiteDb;
 using FluiTec.AppFx.Options;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FluiTec.AppFx.IdentityServer.Dynamic
 {
@@ -54,7 +55,7 @@ namespace FluiTec.AppFx.IdentityServer.Dynamic
             internal static IIdentityServerDataService ProvideService(IConfigurationRoot configuration)
             {
                 if (_options == null)
-                    _options = configuration.GetConfiguration<MssqlDapperServiceOptions>();
+                    _options = configuration.Configure<MssqlDapperServiceOptions>(new ServiceCollection());
                 return new MssqlDapperIdentityServerDataService(_options);
             }
         }
@@ -66,7 +67,7 @@ namespace FluiTec.AppFx.IdentityServer.Dynamic
             internal static IIdentityServerDataService ProvideService(IConfigurationRoot configuration)
             {
                 if (_options == null)
-                    _options = configuration.GetConfiguration<PgsqlDapperServiceOptions>();
+                    _options = configuration.Configure<PgsqlDapperServiceOptions>(new ServiceCollection());
                 return new PgsqlDapperIdentityServerDataService(_options);
             }
         }
@@ -78,7 +79,7 @@ namespace FluiTec.AppFx.IdentityServer.Dynamic
             internal static IIdentityServerDataService ProvideService(IConfigurationRoot configuration)
             {
                 if (_options == null)
-                    _options = configuration.GetConfiguration<MysqlDapperServiceOptions>();
+                    _options = configuration.Configure<MysqlDapperServiceOptions>(new ServiceCollection());
                 return new MysqlDapperIdentityServerDataService(_options);
             }
         }
@@ -90,7 +91,7 @@ namespace FluiTec.AppFx.IdentityServer.Dynamic
             internal static IIdentityServerDataService ProvideService(IConfigurationRoot configuration)
             {
                 if (_options == null)
-                    _options = configuration.GetConfiguration<LiteDbServiceOptions>();
+                    _options = configuration.Configure<LiteDbServiceOptions>(new ServiceCollection());
                 return new LiteDbIdentityServerDataService(_options);
             }
         }
